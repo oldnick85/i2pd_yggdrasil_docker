@@ -1,0 +1,95 @@
+# syntax=docker/dockerfile:1
+ARG UBUNTU_VERSION=22.04
+FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
+ARG I2PD_VERSION=2.45.1
+ARG I2PD_COMPILER=gcc
+RUN DEBIAN_FRONTEND=noninteractive\
+    apt-get update &&\
+    apt-get -y upgrade
+RUN DEBIAN_FRONTEND=noninteractive\
+    apt-get install -y $I2PD_COMPILER
+RUN DEBIAN_FRONTEND=noninteractive\ 
+    apt-get install -y \
+    git \
+    make \
+    cmake \
+    debhelper
+RUN DEBIAN_FRONTEND=noninteractive\ 
+    apt-get install -y \
+    libboost-date-time-dev \
+    libboost-filesystem-dev \
+    libboost-program-options-dev \
+    libboost-system-dev \
+    libssl-dev \
+    zlib1g-dev
+RUN DEBIAN_FRONTEND=noninteractive\ 
+    apt-get install -y \ 
+    libminiupnpc-dev
+WORKDIR /BUILD_I2PD/
+RUN git clone --depth 1 --branch $I2PD_VERSION https://github.com/PurpleI2P/i2pd.git
+WORKDIR /BUILD_I2PD/i2pd/build
+RUN cmake -DCMAKE_BUILD_TYPE=Release -DWITH_AESNI=ON -DWITH_UPNP=ON .
+RUN make
+
+FROM ubuntu:${UBUNTU_VERSION} as builder_yggdrasil
+ARG YGGDRASIL_VERSION=v0.4.7
+RUN DEBIAN_FRONTEND=noninteractive\
+    apt-get update &&\
+    apt-get -y upgrade
+RUN DEBIAN_FRONTEND=noninteractive\
+    apt-get install -y git golang
+WORKDIR /BUILD_YGGDRASIL/
+RUN git clone --depth 1 --branch $YGGDRASIL_VERSION https://github.com/yggdrasil-network/yggdrasil-go.git
+ENV CGO_ENABLED=0
+WORKDIR /BUILD_YGGDRASIL/yggdrasil-go
+RUN ./build
+
+FROM ubuntu:${UBUNTU_VERSION}
+RUN DEBIAN_FRONTEND=noninteractive\
+    apt-get update &&\
+    apt-get -y upgrade
+RUN DEBIAN_FRONTEND=noninteractive\ 
+    apt-get install -y \
+    libboost-date-time-dev \
+    libboost-filesystem-dev \
+    libboost-program-options-dev \
+    libboost-system-dev \
+    libssl3 \
+    zlib1g
+RUN DEBIAN_FRONTEND=noninteractive\ 
+    apt-get install -y \ 
+    libminiupnpc17
+# Ports Used by I2P
+# Webconsole
+EXPOSE 7070
+# HTTP Proxy
+EXPOSE 4444
+# SOCKS Proxy
+EXPOSE 4447
+# SAM Bridge (TCP)
+EXPOSE 7656
+# BOB Bridge
+EXPOSE 2827
+# I2CP
+EXPOSE 7654
+# 7650
+EXPOSE 7650
+# Port to listen for connections
+EXPOSE 10765
+WORKDIR /I2PD/
+COPY --from=builder_i2pd /BUILD_I2PD/i2pd/build/i2pd .
+COPY --from=builder_i2pd /BUILD_I2PD/i2pd/contrib/certificates ./certificates
+COPY i2pd.conf .
+RUN ulimit -n 4096
+# Ports used by YGGDRASIL
+# Listen
+EXPOSE 10654
+# Default yggdrasil port
+EXPOSE 9001
+WORKDIR /YGGDRASIL/
+COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasil .
+COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasilctl .
+COPY yggdrasil.conf .
+WORKDIR /
+COPY entrypoint.sh .
+CMD ["bash", "/entrypoint.sh"]
