@@ -15,7 +15,7 @@ Before rest of all you have to make changes in configuration files:
 
 You can build docker image by simply run script *make_i2pd_yggdrasil_docker_image.sh*. 
 
-> bash make_docker_image.sh
+> bash make_i2pd_yggdrasil_docker_image.sh
 
 Feel free to modify it with your own building arguments.
 
@@ -23,7 +23,7 @@ Feel free to modify it with your own building arguments.
 
 To run docker container just run script *run_i2pd_yggdrasil_docker_image.sh*
 
-> bash run_docker_image.sh
+> bash run_i2pd_yggdrasil_docker_image.sh
 
 ## Deploy
 
