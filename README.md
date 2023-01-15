@@ -30,6 +30,5 @@ To run docker container just run script *run_i2pd_yggdrasil_docker_image.sh*
 To deploy built image to your host just execute this from command line
 
 > docker save i2pd_yggdrasil:latest | bzip2 | pv | ssh user@host docker load
-> scp run_i2pd_yggdrasil_docker_image.sh user@host:.
 
-## 
+> scp run_i2pd_yggdrasil_docker_image.sh user@host:.
