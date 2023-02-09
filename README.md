@@ -5,11 +5,8 @@
 This project is a set of tools for building [I2PD](https://i2pd.website/) over [YGGDRASIL](https://yggdrasil-network.github.io/) docker images.
 No clearnet for i2p, only yggdrasil!
 
-## First of all!
-
-Before rest of all you have to make changes in configuration files:
-
-* yggdrasil.conf: fill *Peers* with outbound peer connections, *PublicKey* and *PrivateKey* with generated [keys](https://yggdrasil-network.github.io/configuration.html)
+At startup, the script searches YGGDRASIL public peers and chooses several best of them. 
+Then it generates YGGDRASIL *PublicKey* and *PrivateKey* unless the keys not set in environment variables.
 
 ## Building
 

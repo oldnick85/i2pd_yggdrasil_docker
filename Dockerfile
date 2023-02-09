@@ -60,7 +60,8 @@ RUN DEBIAN_FRONTEND=noninteractive\
     zlib1g
 RUN DEBIAN_FRONTEND=noninteractive\ 
     apt-get install -y \ 
-    libminiupnpc17
+    libminiupnpc17 \
+    git python3 iputils-ping
 # Ports Used by I2P
 # Webconsole
 EXPOSE 7070
