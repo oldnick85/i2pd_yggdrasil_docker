@@ -42,6 +42,8 @@ WORKDIR /BUILD_YGGDRASIL/
 RUN git clone --depth 1 --branch $YGGDRASIL_VERSION https://github.com/yggdrasil-network/yggdrasil-go.git
 ENV CGO_ENABLED=0
 WORKDIR /BUILD_YGGDRASIL/yggdrasil-go
+# add genkeys to build
+RUN sed -i -e 's/yggdrasil yggdrasilctl/yggdrasil yggdrasilctl genkeys/g' build
 RUN ./build
 
 FROM ubuntu:${UBUNTU_VERSION}
@@ -89,6 +91,7 @@ EXPOSE 9001
 WORKDIR /YGGDRASIL/
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasil .
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasilctl .
+COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/genkeys .
 COPY yggdrasil.conf .
 WORKDIR /
 COPY entrypoint.sh .
