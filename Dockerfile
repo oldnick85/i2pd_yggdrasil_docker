@@ -75,7 +75,7 @@ EXPOSE 7656
 EXPOSE 2827
 # I2CP
 EXPOSE 7654
-# 7650
+# I2PControl
 EXPOSE 7650
 # Port to listen for connections
 EXPOSE 10765
