@@ -6,4 +6,5 @@ docker build \
     --build-arg I2PD_COMPILER=gcc \
     --build-arg YGGDRASIL_VERSION=v0.4.7 \
     --tag i2pd_yggdrasil:${TAG_VERSION} \
+    --tag i2pd_yggdrasil:latest \
     .
