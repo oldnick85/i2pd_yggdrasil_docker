@@ -47,10 +47,10 @@ RUN sed -i -e 's/yggdrasil yggdrasilctl/yggdrasil yggdrasilctl genkeys/g' build
 RUN ./build
 
 FROM ubuntu:${UBUNTU_VERSION}
-RUN DEBIAN_FRONTEND=noninteractive\
+RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update &&\
     apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive\ 
+RUN DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \
     libboost-date-time-dev \
     libboost-filesystem-dev \
@@ -58,36 +58,51 @@ RUN DEBIAN_FRONTEND=noninteractive\
     libboost-system-dev \
     libssl3 \
     zlib1g
-RUN DEBIAN_FRONTEND=noninteractive\ 
+RUN DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \ 
     libminiupnpc17 \
     git python3 python3-pip iputils-ping
-# Ports Used by I2P
-# Webconsole
+# ==== UTILS ====
+WORKDIR /UTILS/
+RUN git config --global advice.detachedHead false
+#   script to get strong yggdrasil address (https://yggdrasil-network.github.io/configuration.html#generating-stronger-addresses-and-prefixes)
+RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys
+RUN python3 -m pip install -r /UTILS/yggdrasil_get_keys/requirements.txt
+#   script to find yggdrasil public peers
+RUN git clone --depth 1 --branch v3 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
+RUN python3 -m pip install -r /UTILS/yggdrasil_find_public_peers/requirements.txt
+#   save peers to use in case of unavailable repository
+RUN python3 /UTILS/yggdrasil_find_public_peers/yggdrasil_find_public_peers.py \
+    --yggdrasil-conf="" \
+    --yggdrasil-peers-json="/UTILS/yggdrasil_find_public_peers/public_peers.json"
+# ==== I2P ====
+#   Ports Used by I2P
+#   Webconsole
 EXPOSE 7070
-# HTTP Proxy
+#   HTTP Proxy
 EXPOSE 4444
-# SOCKS Proxy
+#   SOCKS Proxy
 EXPOSE 4447
-# SAM Bridge (TCP)
+#   SAM Bridge (TCP)
 EXPOSE 7656
-# BOB Bridge
+#   BOB Bridge
 EXPOSE 2827
-# I2CP
+#   I2CP
 EXPOSE 7654
-# I2PControl
+#   I2PControl
 EXPOSE 7650
-# Port to listen for connections
+#   Port to listen for connections
 EXPOSE 10765
 WORKDIR /I2PD/
 COPY --from=builder_i2pd /BUILD_I2PD/i2pd/build/i2pd .
 COPY --from=builder_i2pd /BUILD_I2PD/i2pd/contrib/certificates ./certificates
 COPY i2pd.conf .
 RUN ulimit -n 4096
-# Ports used by YGGDRASIL
-# Listen
+# ==== YGGDRASIL ====
+#   Ports used by YGGDRASIL
+#   Listen
 EXPOSE 10654
-# Default yggdrasil port
+#   Default yggdrasil port
 EXPOSE 9001
 WORKDIR /YGGDRASIL/
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasil .
