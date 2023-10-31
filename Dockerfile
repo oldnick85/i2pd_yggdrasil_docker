@@ -69,7 +69,7 @@ RUN git config --global advice.detachedHead false
 RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys
 RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_get_keys/requirements.txt
 #   script to find yggdrasil public peers
-RUN git clone --depth 1 --branch v3 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
+RUN git clone --depth 1 --branch v4 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
 RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_find_public_peers/requirements.txt
 #   save peers to use in case of unavailable repository
 RUN python3 /UTILS/yggdrasil_find_public_peers/yggdrasil_find_public_peers.py \
