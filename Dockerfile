@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-ARG UBUNTU_VERSION=22.04
+ARG UBUNTU_VERSION=23.10
 FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
 ARG I2PD_VERSION=2.49.0
 ARG I2PD_COMPILER=gcc
@@ -32,7 +32,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release -DWITH_AESNI=ON -DWITH_UPNP=ON .
 RUN make
 
 FROM ubuntu:${UBUNTU_VERSION} as builder_yggdrasil
-ARG YGGDRASIL_VERSION=v0.4.7
+ARG YGGDRASIL_VERSION=v0.5.1
 RUN DEBIAN_FRONTEND=noninteractive\
     apt-get update &&\
     apt-get -y upgrade
@@ -67,10 +67,10 @@ WORKDIR /UTILS/
 RUN git config --global advice.detachedHead false
 #   script to get strong yggdrasil address (https://yggdrasil-network.github.io/configuration.html#generating-stronger-addresses-and-prefixes)
 RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys
-RUN python3 -m pip install -r /UTILS/yggdrasil_get_keys/requirements.txt
+RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_get_keys/requirements.txt
 #   script to find yggdrasil public peers
 RUN git clone --depth 1 --branch v3 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
-RUN python3 -m pip install -r /UTILS/yggdrasil_find_public_peers/requirements.txt
+RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_find_public_peers/requirements.txt
 #   save peers to use in case of unavailable repository
 RUN python3 /UTILS/yggdrasil_find_public_peers/yggdrasil_find_public_peers.py \
     --yggdrasil-conf="" \
