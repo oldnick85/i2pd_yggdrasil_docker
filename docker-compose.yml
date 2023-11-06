@@ -1,0 +1,24 @@
+version: "3.3"
+   
+services:
+  # I2PD_YGGDRASIL
+  i2pd_yggdrasil:
+    image: i2pd_yggdrasil:latest
+    container_name: i2pd_yggdrasil
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - "2827:2827"
+      - "4444:4444" 
+      - "4447:4447"
+      - "7070:7070"
+      - "7650:7650"
+      - "7654:7654"
+      - "7656:7656"
+      - "10765:10765"
+      - "10654:10654"
+      - "9001:9001"
+  
