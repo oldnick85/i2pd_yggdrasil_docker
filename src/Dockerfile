@@ -96,7 +96,7 @@ EXPOSE 10765
 WORKDIR /I2PD/
 COPY --from=builder_i2pd /BUILD_I2PD/i2pd/build/i2pd .
 COPY --from=builder_i2pd /BUILD_I2PD/i2pd/contrib/certificates ./certificates
-COPY i2pd.conf .
+COPY ./src/i2pd.conf .
 RUN ulimit -n 4096
 # ==== YGGDRASIL ====
 #   Ports used by YGGDRASIL
@@ -108,7 +108,7 @@ WORKDIR /YGGDRASIL/
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasil .
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasilctl .
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/genkeys .
-COPY yggdrasil.conf .
+COPY ./src/yggdrasil.conf .
 WORKDIR /
-COPY entrypoint.sh .
+COPY ./src/entrypoint.sh .
 CMD ["bash", "/entrypoint.sh"]
