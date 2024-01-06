@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG UBUNTU_VERSION=23.10
 FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
-ARG I2PD_VERSION=2.49.0
+ARG I2PD_VERSION=2.50.1
 ARG I2PD_COMPILER=gcc
 RUN DEBIAN_FRONTEND=noninteractive\
     apt-get update &&\
