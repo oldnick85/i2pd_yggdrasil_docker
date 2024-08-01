@@ -3,7 +3,7 @@ version: "3.3"
 services:
   # I2PD_YGGDRASIL
   i2pd_yggdrasil:
-    image: i2pd_yggdrasil:latest
+    image: i2pd_yggdrasil:${APP_VERSION:-latest}
     container_name: i2pd_yggdrasil
     privileged: true
     cap_add:
