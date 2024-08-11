@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
-ARG I2PD_VERSION=2.53.0
+ARG I2PD_VERSION=2.53.1
 ARG I2PD_COMPILER=gcc
 RUN DEBIAN_FRONTEND=noninteractive\
     apt-get update &&\
@@ -32,7 +32,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release -DWITH_AESNI=ON -DWITH_UPNP=ON .
 RUN make
 
 FROM ubuntu:${UBUNTU_VERSION} as builder_yggdrasil
-ARG YGGDRASIL_VERSION=v0.5.6
+ARG YGGDRASIL_VERSION=v0.5.7
 RUN DEBIAN_FRONTEND=noninteractive\
     apt-get update &&\
     apt-get -y upgrade
