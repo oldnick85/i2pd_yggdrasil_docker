@@ -3,18 +3,18 @@ ARG UBUNTU_VERSION=24.04
 FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
 ARG I2PD_VERSION=2.54.0
 ARG I2PD_COMPILER=gcc
-RUN DEBIAN_FRONTEND=noninteractive\
+RUN DEBIAN_FRONTEND=noninteractive \
     apt-get update &&\
     apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive\
+RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install -y $I2PD_COMPILER
-RUN DEBIAN_FRONTEND=noninteractive\ 
+RUN DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \
     git \
     make \
     cmake \
     debhelper
-RUN DEBIAN_FRONTEND=noninteractive\ 
+RUN DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \
     libboost-date-time-dev \
     libboost-filesystem-dev \
@@ -22,55 +22,61 @@ RUN DEBIAN_FRONTEND=noninteractive\
     libboost-system-dev \
     libssl-dev \
     zlib1g-dev
-RUN DEBIAN_FRONTEND=noninteractive\ 
+RUN DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \ 
     libminiupnpc-dev
 WORKDIR /BUILD_I2PD/
+RUN git config --global advice.detachedHead false
 RUN git clone --depth 1 --branch $I2PD_VERSION https://github.com/PurpleI2P/i2pd.git
 WORKDIR /BUILD_I2PD/i2pd/build
 RUN cmake -DCMAKE_BUILD_TYPE=Release -DWITH_AESNI=ON -DWITH_UPNP=ON .
 RUN make
 
 FROM ubuntu:${UBUNTU_VERSION} as builder_yggdrasil
-ARG YGGDRASIL_VERSION=v0.5.10
-RUN DEBIAN_FRONTEND=noninteractive\
-    apt-get update &&\
+ARG YGGDRASIL_VERSION=v0.5.11
+RUN DEBIAN_FRONTEND=noninteractive \
+    apt-get update && \
     apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive\
+RUN DEBIAN_FRONTEND=noninteractive \
     apt-get install -y git golang
 WORKDIR /BUILD_YGGDRASIL/
+RUN git config --global advice.detachedHead false
 RUN git clone --depth 1 --branch $YGGDRASIL_VERSION https://github.com/yggdrasil-network/yggdrasil-go.git
 ENV CGO_ENABLED=0
 WORKDIR /BUILD_YGGDRASIL/yggdrasil-go
 # add genkeys to build
 RUN sed -i -e 's/yggdrasil yggdrasilctl/yggdrasil yggdrasilctl genkeys/g' build
 RUN ./build
+#   script to get strong yggdrasil address (https://yggdrasil-network.github.io/configuration.html#generating-stronger-addresses-and-prefixes)
+RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys
+RUN rm -rf /UTILS/yggdrasil_get_keys/.git
+#   script to find yggdrasil public peers
+RUN git clone --depth 1 --branch v4 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
+RUN rm -rf /UTILS/yggdrasil_find_public_peers/.git
 
 FROM ubuntu:${UBUNTU_VERSION}
 RUN DEBIAN_FRONTEND=noninteractive \
-    apt-get update &&\
-    apt-get -y upgrade
-RUN DEBIAN_FRONTEND=noninteractive \ 
+    apt-get update && \
+    apt-get -y upgrade && \
+    DEBIAN_FRONTEND=noninteractive \ 
     apt-get install -y \
     libboost-date-time-dev \
     libboost-filesystem-dev \
     libboost-program-options-dev \
     libboost-system-dev \
     libssl3 \
-    zlib1g
-RUN DEBIAN_FRONTEND=noninteractive \ 
-    apt-get install -y \ 
+    zlib1g \ 
     libminiupnpc17 \
-    git python3 python3-pip iputils-ping
+    git \
+    python3 python3-pip iputils-ping && \
+    apt-get clean -y
 # ==== UTILS ====
 WORKDIR /UTILS/
-RUN git config --global advice.detachedHead false
-#   script to get strong yggdrasil address (https://yggdrasil-network.github.io/configuration.html#generating-stronger-addresses-and-prefixes)
-RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys
-RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_get_keys/requirements.txt
-#   script to find yggdrasil public peers
-RUN git clone --depth 1 --branch v4 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers
-RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_find_public_peers/requirements.txt
+COPY --from=builder_yggdrasil /UTILS/yggdrasil_get_keys /UTILS/yggdrasil_get_keys
+COPY --from=builder_yggdrasil /UTILS/yggdrasil_find_public_peers /UTILS/yggdrasil_find_public_peers
+RUN python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_get_keys/requirements.txt && \
+    python3 -m pip install --break-system-packages -r /UTILS/yggdrasil_find_public_peers/requirements.txt && \ 
+    python3 -m pip cache purge
 #   save peers to use in case of unavailable repository
 RUN python3 /UTILS/yggdrasil_find_public_peers/yggdrasil_find_public_peers.py \
     --yggdrasil-conf="" \
