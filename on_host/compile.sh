@@ -18,7 +18,7 @@ sudo apt-get install -y \
     libminiupnpc-dev
 mkdir /tmp/BUILD_I2PD/
 cd /tmp/BUILD_I2PD/
-git clone --depth 1 --branch 2.55.0 https://github.com/PurpleI2P/i2pd.git
+git clone --depth 1 --branch 2.56.0 https://github.com/PurpleI2P/i2pd.git
 cd /tmp/BUILD_I2PD/i2pd/build
 cmake -DCMAKE_BUILD_TYPE=Release -DWITH_AESNI=ON -DWITH_UPNP=ON .
 make
