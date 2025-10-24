@@ -1,37 +1,70 @@
-# I2PD_YGGDRASIL_DOCKER
+# 🌐🔒 I2P over Yggdrasil Network
 
-## Description
+## 📝 Description
 
-This project is a set of tools for building [I2PD](https://i2pd.website/) over [YGGDRASIL](https://yggdrasil-network.github.io/) docker images.
-No clearnet for i2p, only yggdrasil!
+A Docker container that runs [I2PD](https://i2pd.website/) over the [Yggdrasil](https://yggdrasil-network.github.io/) encrypted mesh network, providing enhanced anonymity and network resilience.
+
+No clearnet for I2P (Invisible Internet Project), only Yggdrasil!
+
+## 🎯 Overview
+
+This project creates a privacy-focused networking stack that combines:
+
+- **I2P (Invisible Internet Project)**: An anonymous overlay network that focuses on secure and anonymous communication
+- **Yggdrasil Network**: An early-stage implementation of an encrypted IPv6 routing network for mesh and point-to-point connectivity
+
+### ✨ Key Features
+
+- **Double Encryption** 🔒🔒: Traffic is encrypted through both Yggdrasil and I2P layers
+- **Mesh Networking** 🕸️: Operates over Yggdrasil's peer-to-peer mesh network
+- **Enhanced Anonymity** 🎭: I2P's anonymity features combined with Yggdrasil's encryption
+- **Automatic Peer Discovery** 🔍: Automatically finds and connects to optimal Yggdrasil peers
+- **Strong Cryptography** 🛡️: Generates cryptographically strong Yggdrasil addresses
+
+## 🏗️ Architecture
 
 At startup, the script searches YGGDRASIL public peers and chooses several best of them. 
 Then it generates YGGDRASIL *PublicKey* and *PrivateKey* unless the keys not set in environment variables.
 
-## Preparations
++-------------------------+
+| I2P Applications        |
++-------------------------+
+| I2P Routing Layer       |
++-------------------------+
+| Yggdrasil Network Layer |
++-------------------------+
+| Physical Network        |
++-------------------------+
 
-Before building and deploying i2pd_yggdrasil docker image, you need to run the script
+## 📋 Prerequisites
 
-> bash support/requirements.sh
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+- Linux host (for TUN device access)
+- IPv6 support enabled
 
-## Building
+## 🚀 Quick Start
 
-You can build docker image by simply run script *make_i2pd_yggdrasil_docker_image.sh*. 
+1. **Clone and build** 📥:
+```bash
+chmod +x make_docker_image.sh
+./make_docker_image.sh
+```
 
-> bash support/make_docker_image.sh
+2. **Run with Docker Compose** 🏃‍♂️:
+```bash
+docker-compose up -d
+```
 
-Feel free to modify it with your own building arguments.
+3. **Access (I2P web console)[http://localhost:7070] to check I2P router state** 🌐:
+```bash
+# View I2P status
+curl http://localhost:7070
+```
 
-## Running
+## Security Considerations 🔒
 
-To run docker container just use docker-compose like this
-
-> docker-compose -f src/docker-compose.yml up -d
-
-## Deploy
-
-To deploy built image to your host use script
-
-> bash support/docker_deploy.sh
-
-Note, this script takes parameters from *secrets/settings.json*, look *secrets/settings_pattern.json* for example.
+ - The container runs with NET_ADMIN capabilities for TUN device access
+ - Yggdrasil keys are generated automatically on first run
+ - I2P is configured in floodfill mode by default (can be disabled)
+ - Both networks use strong encryption by default
