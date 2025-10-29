@@ -51,7 +51,7 @@ RUN sed -i 's/yggdrasil yggdrasilctl/yggdrasil yggdrasilctl genkeys/g' build && 
 
 # Utility scripts for enhanced Yggdrasil functionality
 RUN git clone --depth 1 --branch v0 https://github.com/oldnick85/yggdrasil_get_keys.git /UTILS/yggdrasil_get_keys && \
-    git clone --depth 1 --branch v4 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers && \
+    git clone --depth 1 --branch v5 https://github.com/oldnick85/yggdrasil_find_public_peers.git /UTILS/yggdrasil_find_public_peers && \
     rm -rf /UTILS/yggdrasil_get_keys/.git /UTILS/yggdrasil_find_public_peers/.git
 
 # Final runtime image
