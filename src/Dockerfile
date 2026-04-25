@@ -3,7 +3,7 @@ ARG UBUNTU_VERSION=24.04
 
 # I2P build stage
 FROM ubuntu:${UBUNTU_VERSION} AS builder_i2pd
-ARG I2PD_VERSION=2.58.0
+ARG I2PD_VERSION=2.60.0
 ARG I2PD_COMPILER=gcc
 
 RUN DEBIAN_FRONTEND=noninteractive apt-get update && \

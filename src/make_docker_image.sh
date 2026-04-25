@@ -12,7 +12,7 @@ echo "Commit: $COMMIT_HASH"
 # Build the Docker image with build args and tags
 docker build --file="Dockerfile" \
     --build-arg UBUNTU_VERSION=24.04 \
-    --build-arg I2PD_VERSION=2.58.0 \
+    --build-arg I2PD_VERSION=2.60.0 \
     --build-arg I2PD_COMPILER=gcc \
     --build-arg YGGDRASIL_VERSION=v0.5.12 \
     --label "org.label-schema.version=$TAG_VERSION" \
