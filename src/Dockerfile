@@ -65,7 +65,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update && \
         libboost-system-dev \
         libssl3 \
         zlib1g \
-        libminiupnpc17 \
+        libminiupnpc-dev \
         git \
         python3 \
         python3-pip \
@@ -118,7 +118,7 @@ RUN ulimit -n 4096
 
 # ==== YGGDRASIL CONFIGURATION ====
 # Yggdrasil listener
-EXPOSE 10654
+EXPOSE 10666
 
 WORKDIR /YGGDRASIL/
 COPY --from=builder_yggdrasil /BUILD_YGGDRASIL/yggdrasil-go/yggdrasil .

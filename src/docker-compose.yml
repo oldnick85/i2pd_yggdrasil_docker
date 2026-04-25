@@ -20,7 +20,7 @@ services:
       - "7656:7656"   # SAM Bridge
       - "10765:10765" # Main I2P Listener
       # Yggdrasil Ports
-      - "10654:10654" # Yggdrasil Listener
+      - "10666:10666" # Yggdrasil Listener
     environment:
       - TZ=UTC
     restart: unless-stopped
